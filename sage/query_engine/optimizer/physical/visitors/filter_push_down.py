@@ -92,6 +92,19 @@ class FilterTargets(PhysicalPlanVisitor):
             return [(node, RIGHT)]
         # cannot be moved after this iterator
         return []
+    
+    def visit_leftjoin(self, node: PreemptableIterator, context: Dict[str, Any] = {}) -> List[Tuple[PreemptableIterator, int]]:
+        # can be moved at a lower level than the current iterator
+        targets = self.visit(node._left) + self.visit(node._right)
+        if len(targets) > 0:
+            return targets
+        # can be a child of the current iterator
+        if node._left.variables().issuperset(self._constrained_variables):
+            return [(node, LEFT)]
+        if node._right.variables().issuperset(self._constrained_variables):
+            return [(node, RIGHT)]
+        # cannot be moved after this iterator
+        return []
 
     def visit_union(self, node: PreemptableIterator, context: Dict[str, Any] = {}) -> List[Tuple[PreemptableIterator, int]]:
         # can be moved at a lower level than the current iterator
@@ -190,6 +203,9 @@ class FilterPushDown(PhysicalPlanVisitor):
         return node
 
     def visit_join(self, node: PreemptableIterator, context: Dict[str, Any] = {}) -> PreemptableIterator:
+        return self.__process_binary_iterator__(node)
+    
+    def visit_leftjoin(self, node: PreemptableIterator, context: Dict[str, Any] = {}) -> PreemptableIterator:
         return self.__process_binary_iterator__(node)
 
     def visit_union(self, node: PreemptableIterator, context: Dict[str, Any] = {}) -> PreemptableIterator:

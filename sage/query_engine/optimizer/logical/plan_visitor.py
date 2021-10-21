@@ -55,6 +55,8 @@ class LogicalPlanVisitor(ABC):
             return self.visit_filter(node)
         elif node.name == 'Join':
             return self.visit_join(node)
+        elif node.name == "LeftJoin":
+            return self.visit_leftjoin(node) # to LeftJoin
         elif node.name == 'Union':
             return self.visit_union(node)
         elif node.name == 'BGP':
@@ -104,6 +106,9 @@ class LogicalPlanVisitor(ABC):
         raise UnsupportedSPARQL(f'The {node.name} operator is not implemented')
 
     def visit_join(self, node: CompValue) -> Any:
+        raise UnsupportedSPARQL(f'The {node.name} operator is not implemented')
+
+    def visit_leftjoin(slef, node: CompValue) -> Any:
         raise UnsupportedSPARQL(f'The {node.name} operator is not implemented')
 
     def visit_union(self, node: CompValue) -> Any:

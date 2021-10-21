@@ -37,6 +37,11 @@ class FilterSplitter(LogicalPlanVisitor):
         node.p1 = self.visit(node.p1)
         node.p2 = self.visit(node.p2)
         return node
+    
+    def visit_leftjoin(self, node: CompValue) -> CompValue:
+        node.p1 = self.visit(node.p1)
+        node.p2 = self.visit(node.p2)
+        return node
 
     def visit_union(self, node: CompValue) -> CompValue:
         node.p1 = self.visit(node.p1)

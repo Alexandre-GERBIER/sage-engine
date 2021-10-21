@@ -15,6 +15,8 @@ class PhysicalPlanVisitor(ABC):
             return self.visit_projection(node, context=context)
         elif node.serialized_name() == 'join':
             return self.visit_join(node, context=context)
+        elif node.serialized_name() == 'leftjoin':
+            return self.visit_leftjoin(node, context=context)
         elif node.serialized_name() == 'union':
             return self.visit_union(node, context=context)
         elif node.serialized_name() == 'filter':
@@ -36,6 +38,9 @@ class PhysicalPlanVisitor(ABC):
         raise UnsupportedSPARQL(f'The {node.serialized_name()} iterator is not implemented')
 
     def visit_join(self, node: PreemptableIterator, context: Dict[str, Any] = {}) -> Any:
+        raise UnsupportedSPARQL(f'The {node.serialized_name()} iterator is not implemented')
+
+    def visit_leftjoin(self, node: PreemptableIterator, context: Dict[str, Any] = {}) -> Any:
         raise UnsupportedSPARQL(f'The {node.serialized_name()} iterator is not implemented')
 
     def visit_union(self, node: PreemptableIterator, context: Dict[str, Any] = {}) -> Any:

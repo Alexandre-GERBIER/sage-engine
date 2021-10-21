@@ -16,6 +16,9 @@ class QueryPlanStringifier(PhysicalPlanVisitor):
 
     def visit_join(self, node: PreemptableIterator, context: Dict[str, Any] = {}) -> str:
         return f"{self.visit(node._left)}\n{self.visit(node._right)}"
+    
+    def visit_leftjoin(self, node: PreemptableIterator, context: Dict[str, Any] = {}) -> str:
+        return f"{self.visit(node._left)}\n{self.visit(node._right)}"
 
     def visit_values(self, node: PreemptableIterator, context: Dict[str, Any] = {}) -> str:
         variables = ' '.join(node._values[0].keys())

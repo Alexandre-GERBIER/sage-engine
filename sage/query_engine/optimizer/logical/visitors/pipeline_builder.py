@@ -12,6 +12,7 @@ from sage.query_engine.iterators.preemptable_iterator import PreemptableIterator
 from sage.query_engine.iterators.projection import ProjectionIterator
 from sage.query_engine.iterators.union import BagUnionIterator
 from sage.query_engine.iterators.nlj import IndexJoinIterator
+from sage.query_engine.iterators.leftjoin import IndexLeftJoinIterator
 from sage.query_engine.iterators.scan import ScanIterator
 from sage.query_engine.iterators.values import ValuesIterator
 from sage.query_engine.iterators.utils import EmptyIterator
@@ -117,6 +118,12 @@ class PipelineBuilder(LogicalPlanVisitor):
         right_child, right_cardinalities = self.visit(node.p2)
         cardinalities = left_cardinalities + right_cardinalities
         return IndexJoinIterator(left_child, right_child), cardinalities
+
+    def visit_leftjoin(self, node: CompValue) -> Tuple[PreemptableIterator, List[Dict[str, Any]]]:
+        left_child, left_cardinalities = self.visit(node.p1)
+        right_child, right_cardinalities = self.visit(node.p2)
+        cardinalities = left_cardinalities + right_cardinalities
+        return IndexLeftJoinIterator(left_child, right_child), cardinalities
 
     def visit_union(self, node: CompValue) -> Tuple[PreemptableIterator, List[Dict[str, Any]]]:
         left_child, left_cardinalities = self.visit(node.p1)
