@@ -48,6 +48,9 @@ class CostEstimartor(PhysicalPlanVisitor):
 
     def visit_join(self, node: PreemptableIterator, context: Dict[str, Any] = {}) -> float:
         return self.visit(node._left, context=context) + self.visit(node._right, context=context)
+    
+    def visit_leftjoin(self, node: PreemptableIterator, context: Dict[str, Any] = {}) -> float:
+        return self.visit(node._left, context=context) + self.visit(node._right, context=context)
 
     def visit_union(self, node: PreemptableIterator, context: Dict[str, Any] = {}) -> float:
         return self.visit(node._left, context=context) + self.visit(node._right, context=context)

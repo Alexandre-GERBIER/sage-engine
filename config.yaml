@@ -1,0 +1,13 @@
+name: SaGe server with PostgreSQL backend
+maintainer: Thomas Minier <thomas.minier@univ-nantes.fr>
+public_url: http://localhost:8000
+quota: 1000
+max_results: 2000
+graphs:
+-
+  name: my_dataset
+  uri: http://example.org/my_dataset
+  description: A dataset with serializable per row and no isolated reads
+  backend: sqlite
+  # Path to the SQLite database file (the file may not exist)
+  database: database
