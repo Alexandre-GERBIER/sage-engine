@@ -133,7 +133,6 @@ async def execute_query(
                 "cost": Optimizer.get_default().cost(plan)
             }
         }
-        print(stats['metrics'])
         return (bindings, next_page, stats)
     except Exception as err:
         # abort all ongoing transactions, then forward the exception

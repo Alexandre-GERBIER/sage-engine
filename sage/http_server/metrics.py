@@ -35,7 +35,7 @@ def flatten_leaves(iterator: PreemptableIterator) -> None:
         return flatten_leaves(iterator._source)
     elif (iterator.serialized_name() == 'scan') or (iterator.serialized_name() == 'values'):
         return [iterator]
-    elif (iterator.serialized_name() == 'join') or (iterator.serialized_name() == 'union'):
+    elif (iterator.serialized_name() == 'join') or (iterator.serialized_name() == 'union') or (iterator.serialized_name() == 'leftjoin'):
         return flatten_leaves(iterator._left) + flatten_leaves(iterator._right)
     else:
         raise Exception(f'Unsupported iterator type {iterator.serialized_name()}')
