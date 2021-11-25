@@ -135,7 +135,6 @@ async def execute_query(
                 "cardinality": Optimizer.get_default().cardinality(plan)
             }
         }
-        print(stats['metrics'])
         return (bindings, next_page, stats)
     except Exception as err:
         # abort all ongoing transactions, then forward the exception
