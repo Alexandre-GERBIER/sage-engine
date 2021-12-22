@@ -68,6 +68,12 @@ class CardinalityEstimartor(PhysicalPlanVisitor):
         self.visit(node._left, context=context)
         return self.visit(node._right, context=context)
 
+    def visit_leftjoin(
+        self, node: PreemptableIterator, context: Dict[str, Any] = {}
+    ) -> float:
+        self.visit(node._left, context=context)
+        return self.visit(node._right, context=context)
+
     def visit_union(
         self, node: PreemptableIterator, context: Dict[str, Any] = {}
     ) -> float:
