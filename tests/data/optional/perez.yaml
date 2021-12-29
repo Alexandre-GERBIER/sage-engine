@@ -1,0 +1,11 @@
+name: SaGe Test server
+maintainer: Thomas Minier <thomas.minier@univ-nantes.fr>
+quota: 75
+max_results: 500
+graphs:
+-
+  name: perez_optional
+  uri: http://localhost:8000/sparql/perez
+  description: 2.4 example in Perez paper https://users.dcc.uchile.cl/~jperez/papers/tods-a16-perez.pdf
+  backend: hdt-file
+  file: tests/data/optional/perez.hdt

@@ -1,0 +1,10 @@
+_:b1 <http://example.org/name> "paul".
+_:b1 <http://example.org/phone> "777-3426".
+_:b2 <http://example.org/name> "john".
+_:b2 <http://example.org/email> "john@acd.edu".
+_:b3 <http://example.org/name> "george".
+_:b3 <http://example.org/webpage> "www.george.edu".
+_:b4 <http://example.org/name> "ringo".
+_:b4 <http://example.org/email> "ringo@acd.edu".
+_:b4 <http://example.org/webpage> "www.starr.edu".
+_:b4 <http://example.org/phone> "888-4537".
