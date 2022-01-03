@@ -13,7 +13,11 @@ perez_queries = [
             ?a <http://example.org/webpage> ?w
         }
     }
-    """, 2),
+    """, 2, [
+        {'?a': 'http://testserver/sparql/bnode#95463b3f9b269ca07945624ede3905e3', '?e': '"ringo@acd.edu"', '?w': '"www.starr.edu"'},
+        {'?a': 'http://testserver/sparql/bnode#fae9b9a0d388c5aa026a8b96e2af0c5c', '?e': '"john@acd.edu"'}
+    ]
+    ),
     ("""
     select * where {
         ?a <http://example.org/name> ?n.
@@ -24,7 +28,12 @@ perez_queries = [
             ?a <http://example.org/webpage> ?w
         }	
     }
-    """, 4),
+    """, 4, [
+        {'?a': 'http://testserver/sparql/bnode#95463b3f9b269ca07945624ede3905e3', '?n': '"ringo"', '?e': '"ringo@acd.edu"', '?w': '"www.starr.edu"'},
+        {'?a': 'http://testserver/sparql/bnode#b55340d9cf8ca5e75683db91f218b5b9', '?n': '"george"', '?w': '"www.george.edu"'},
+        {'?a': 'http://testserver/sparql/bnode#e5f48712e5fb52365961aa9bfe58d592', '?n': '"paul"'},
+        {'?a': 'http://testserver/sparql/bnode#fae9b9a0d388c5aa026a8b96e2af0c5c', '?n': '"john"', '?e': '"john@acd.edu"'}
+    ]),
     ("""
     select * where {
         ?a <http://example.org/name> ?n.
@@ -36,7 +45,12 @@ perez_queries = [
         }
     }
 
-    """, 4),
+    """, 4, [
+        {'?a': 'http://testserver/sparql/bnode#95463b3f9b269ca07945624ede3905e3', '?n': '"ringo"', '?e': '"ringo@acd.edu"', '?w': '"www.starr.edu"'},
+        {'?a': 'http://testserver/sparql/bnode#b55340d9cf8ca5e75683db91f218b5b9', '?n': '"george"'},
+        {'?a': 'http://testserver/sparql/bnode#e5f48712e5fb52365961aa9bfe58d592', '?n': '"paul"'},
+        {'?a': 'http://testserver/sparql/bnode#fae9b9a0d388c5aa026a8b96e2af0c5c', '?n': '"john"', '?e': '"john@acd.edu"'}
+    ]),
     ("""
     select * where {
 	    ?a <http://example.org/name> ?n.
@@ -46,11 +60,13 @@ perez_queries = [
 	    FILTER (?n='paul'^^xsd:string)
     }
 
-    """, 1)
+    """, 1, [
+        {'?a': 'http://testserver/sparql/bnode#e5f48712e5fb52365961aa9bfe58d592', '?n': '"paul"', '?p': '"777-3426"'}
+    ])
 ]
 
 
-class TestUnionInterface(object):
+class TestLeftJoinInterface(object):
     @classmethod
     def setup_class(self):
         self._app = run_app('tests/data/optional/perez.yaml')
@@ -60,8 +76,8 @@ class TestUnionInterface(object):
     def teardown_class(self):
         pass
 
-    @pytest.mark.parametrize("query,cardinality", perez_queries)
-    def test_leftjoin_interface(self, query, cardinality):
+    @pytest.mark.parametrize("query,cardinality,oracle", perez_queries)
+    def test_leftjoin_interface(self, query, cardinality, oracle):
         nbResults = 0
         nbCalls = 0
         hasNext = True
@@ -76,4 +92,5 @@ class TestUnionInterface(object):
             next_link = response['next']
             nbCalls += 1
         assert nbResults == cardinality
+        assert response['bindings'] == oracle
         assert nbCalls >= 1
