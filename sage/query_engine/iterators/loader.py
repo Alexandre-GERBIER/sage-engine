@@ -8,6 +8,7 @@ from rdflib.plugins.sparql.algebra import translateQuery
 from sage.database.core.dataset import Dataset
 from sage.query_engine.iterators.filter import FilterIterator
 from sage.query_engine.iterators.nlj import IndexJoinIterator
+from sage.query_engine.iterators.leftjoin import IndexLeftJoinIterator
 from sage.query_engine.iterators.preemptable_iterator import PreemptableIterator
 from sage.query_engine.iterators.projection import ProjectionIterator
 from sage.query_engine.iterators.scan import ScanIterator
@@ -19,7 +20,8 @@ from sage.query_engine.protobuf.iterators_pb2 import (RootTree,
                                                       SavedIndexJoinIterator,
                                                       SavedProjectionIterator,
                                                       SavedScanIterator,
-                                                      SavedValuesIterator)
+                                                      SavedValuesIterator,
+                                                      SavedLeftJoinIterator)
 from sage.query_engine.protobuf.utils import protoTriple_to_dict
 
 SavedProtobufPlan = Union[RootTree, SavedBagUnionIterator, SavedFilterIterator, SavedIndexJoinIterator, SavedProjectionIterator, SavedScanIterator]
@@ -54,6 +56,8 @@ def load(saved_plan: SavedProtobufPlan, dataset: Dataset) -> PreemptableIterator
         return load_union(saved_plan, dataset)
     elif type(saved_plan) is SavedValuesIterator:
         return load_values(saved_plan, dataset)
+    elif type(saved_plan) is SavedLeftJoinIterator:
+        return load_leftjoin(saved_plan, dataset)
     else:
         raise Exception(f"Unknown iterator type '{type(saved_plan)}' when loading controls")
 
@@ -176,6 +180,27 @@ def load_nlj(saved_plan: SavedIndexJoinIterator, dataset: Dataset) -> Preemptabl
         current_mappings = dict(saved_plan.muc)
     return IndexJoinIterator(
         left, right, current_mappings=current_mappings
+    )
+
+def load_leftjoin(saved_plan: SavedLeftJoinIterator, dataset: Dataset) -> PreemptableIterator:
+    """Load a IndexLeftJoinIterator from a protobuf serialization.
+
+    Args:
+      * saved_plan: Saved query execution plan.
+      * dataset: RDF dataset used to execute the plan.
+
+    Returns:
+      The pipeline of iterator used to continue query execution.
+    """
+    leftField = saved_plan.WhichOneof('left')
+    left = load(getattr(saved_plan, leftField), dataset)
+    rightField = saved_plan.WhichOneof('right')
+    right = load(getattr(saved_plan, rightField), dataset)
+    current_mappings = None
+    if len(saved_plan.muc) > 0:
+        current_mappings = dict(saved_plan.muc)
+    return IndexLeftJoinIterator(
+        left, right, current_mappings=current_mappings, foundOne=saved_plan.found_one
     )
 
 

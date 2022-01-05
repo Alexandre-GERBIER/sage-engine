@@ -3,7 +3,7 @@
 from typing import Dict, Optional, Set, Any
 
 from sage.query_engine.iterators.preemptable_iterator import PreemptableIterator
-from sage.query_engine.protobuf.iterators_pb2 import SavedIndexJoinIterator
+from sage.query_engine.protobuf.iterators_pb2 import SavedLeftJoinIterator
 from sage.query_engine.protobuf.utils import pyDict_to_protoDict
 
 
@@ -18,13 +18,14 @@ class IndexLeftJoinIterator(PreemptableIterator):
 
     def __init__(
         self, left: PreemptableIterator, right: PreemptableIterator,
-        current_mappings: Optional[Dict[str, str]] = None
+        current_mappings: Optional[Dict[str, str]] = None,
+        foundOne : bool = False
     ):
         super(IndexLeftJoinIterator, self).__init__()
         self._left = left
         self._right = right
         self._current_mappings = current_mappings
-        self._foundOne = False
+        self._foundOne = foundOne
 
     def __repr__(self) -> str:
         return f"<IndexLeftJoinIterator ({self._left} LEFTJOIN {self._right} WITH {self._current_mappings})>"
@@ -83,9 +84,9 @@ class IndexLeftJoinIterator(PreemptableIterator):
                 
                 self._current_mappings = None
 
-    def save(self) -> SavedIndexJoinIterator:
+    def save(self) -> SavedLeftJoinIterator:
         """Save and serialize the iterator as a Protobuf message"""
-        saved_join = SavedIndexJoinIterator()
+        saved_join = SavedLeftJoinIterator()
         # export left source
         left_field = f'{self._left.serialized_name()}_left'
         getattr(saved_join, left_field).CopyFrom(self._left.save())
@@ -94,4 +95,6 @@ class IndexLeftJoinIterator(PreemptableIterator):
         getattr(saved_join, right_field).CopyFrom(self._right.save())
         if self._current_mappings is not None:
             pyDict_to_protoDict(self._current_mappings, saved_join.muc)
+        
+        saved_join.found_one = self._foundOne
         return saved_join

@@ -42,6 +42,7 @@ message SavedProjectionIterator {
     SavedBagUnionIterator union_source = 4;
     SavedFilterIterator filter_source = 5;
     SavedValuesIterator values_source = 6;
+    SavedLeftJoinIterator leftjoin_source = 7;
   }
 }
 
@@ -53,16 +54,41 @@ message SavedIndexJoinIterator {
     SavedIndexJoinIterator join_left = 4;
     SavedFilterIterator filter_left = 5;
     SavedValuesIterator values_left = 6;
+    SavedLeftJoinIterator leftjoin_left = 7;
   }
   oneof right {
-    SavedScanIterator scan_right = 7;
-    SavedProjectionIterator proj_right = 8;
-    SavedBagUnionIterator union_right = 9;
-    SavedIndexJoinIterator join_right = 10;
-    SavedFilterIterator filter_right = 11;
-    SavedValuesIterator values_right = 12;
+    SavedScanIterator scan_right = 8;
+    SavedProjectionIterator proj_right = 9;
+    SavedBagUnionIterator union_right = 10;
+    SavedIndexJoinIterator join_right = 11;
+    SavedFilterIterator filter_right = 12;
+    SavedValuesIterator values_right = 13;
+    SavedLeftJoinIterator leftjoin_right = 14;
   }
-  map<string, string> muc = 13;
+  map<string, string> muc = 15;
+}
+
+message SavedLeftJoinIterator {
+  oneof left {
+    SavedScanIterator scan_left = 1;
+    SavedProjectionIterator proj_left = 2;
+    SavedBagUnionIterator union_left = 3;
+    SavedIndexJoinIterator join_left = 4;
+    SavedFilterIterator filter_left = 5;
+    SavedValuesIterator values_left = 6;
+    SavedLeftJoinIterator leftjoin_left = 7;
+  }
+  oneof right {
+    SavedScanIterator scan_right = 8;
+    SavedProjectionIterator proj_right = 9;
+    SavedBagUnionIterator union_right = 10;
+    SavedIndexJoinIterator join_right = 11;
+    SavedFilterIterator filter_right = 12;
+    SavedValuesIterator values_right = 13;
+    SavedLeftJoinIterator leftjoin_right = 14;
+  }
+  map<string, string> muc = 15;
+  bool found_one = 16;
 }
 
 message SavedBagUnionIterator {
@@ -73,14 +99,16 @@ message SavedBagUnionIterator {
     SavedIndexJoinIterator join_left = 4;
     SavedFilterIterator filter_left = 5;
     SavedValuesIterator values_left = 6;
+    SavedLeftJoinIterator leftjoin_left = 7;
   }
   oneof right {
-    SavedScanIterator scan_right = 7;
-    SavedProjectionIterator proj_right = 8;
-    SavedBagUnionIterator union_right = 9;
-    SavedIndexJoinIterator join_right = 10;
-    SavedFilterIterator filter_right = 11;
-    SavedValuesIterator values_right = 12;
+    SavedScanIterator scan_right = 8;
+    SavedProjectionIterator proj_right = 9;
+    SavedBagUnionIterator union_right = 10;
+    SavedIndexJoinIterator join_right = 11;
+    SavedFilterIterator filter_right = 12;
+    SavedValuesIterator values_right = 13;
+    SavedLeftJoinIterator leftjoin_right = 14;
   }
 }
 
@@ -91,11 +119,12 @@ message SavedFilterIterator {
     SavedFilterIterator filter_source = 3;
     SavedIndexJoinIterator join_source = 4;
     SavedValuesIterator values_right = 5;
+    SavedLeftJoinIterator leftjoin_source = 6;
   }
-  string expression = 6;
-  map<string, string> mu = 7;
-  int64 consumed = 8;
-  int64 produced = 9;
+  string expression = 7;
+  map<string, string> mu = 8;
+  int64 consumed = 9;
+  int64 produced = 10;
 }
 
 message SavedInsertData {
@@ -116,5 +145,6 @@ message RootTree {
     SavedInsertData insert_source = 6;
     SavedDeleteData delete_source = 7;
     SavedValuesIterator values_right = 8;
+    SavedLeftJoinIterator leftjoin_source = 9;
   }
 }
