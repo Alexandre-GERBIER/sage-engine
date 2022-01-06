@@ -77,8 +77,6 @@ class IndexLeftJoinIterator(PreemptableIterator):
                     theMapping = self._current_mappings
                     self._current_mappings = None
                     return theMapping
-                
-                self._current_mappings = None
 
     def save(self) -> SavedLeftJoinIterator:
         """Save and serialize the iterator as a Protobuf message"""
