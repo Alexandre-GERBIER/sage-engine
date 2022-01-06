@@ -18,12 +18,14 @@ class IndexLeftJoinIterator(PreemptableIterator):
 
     def __init__(
         self, left: PreemptableIterator, right: PreemptableIterator,
-        current_mappings: Optional[Dict[str, str]] = None
+        current_mappings: Optional[Dict[str, str]] = None,
+        foundOne : bool = False
     ):
         super(IndexLeftJoinIterator, self).__init__()
         self._left = left
         self._right = right
         self._current_mappings = current_mappings
+        self._foundOne = foundOne
 
     def __repr__(self) -> str:
         return f"<IndexLeftJoinIterator ({self._left} LEFTJOIN {self._right} WITH {self._current_mappings})>"
@@ -61,6 +63,7 @@ class IndexLeftJoinIterator(PreemptableIterator):
         while True:
             if self._current_mappings is None:
                 self._current_mappings = await self._left.next(context=context)
+                self._foundOne = False
                 if self._current_mappings is None:
                     return None
                 self._right.next_stage(self._current_mappings)
@@ -70,13 +73,15 @@ class IndexLeftJoinIterator(PreemptableIterator):
                 # print("debug mappings : ", mappings)
 
                 if mappings is not None:
-                    self._current_mappings = None
+                    self._foundOne = True
                     return mappings
 
-                else:
+                if(not self._foundOne):
                     theMapping = self._current_mappings
                     self._current_mappings = None
                     return theMapping
+                
+                self._current_mappings = None
 
     def save(self) -> SavedLeftJoinIterator:
         """Save and serialize the iterator as a Protobuf message"""
@@ -89,4 +94,6 @@ class IndexLeftJoinIterator(PreemptableIterator):
         getattr(saved_join, right_field).CopyFrom(self._right.save())
         if self._current_mappings is not None:
             pyDict_to_protoDict(self._current_mappings, saved_join.muc)
+        
+        saved_join.found_one = self._foundOne
         return saved_join

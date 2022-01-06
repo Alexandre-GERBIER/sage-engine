@@ -200,7 +200,7 @@ def load_leftjoin(saved_plan: SavedLeftJoinIterator, dataset: Dataset) -> Preemp
     if len(saved_plan.muc) > 0:
         current_mappings = dict(saved_plan.muc)
     return IndexLeftJoinIterator(
-        left, right, current_mappings=current_mappings
+        left, right, current_mappings=current_mappings, foundOne=saved_plan.found_one
     )
 
 
