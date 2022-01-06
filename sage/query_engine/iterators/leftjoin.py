@@ -18,14 +18,12 @@ class IndexLeftJoinIterator(PreemptableIterator):
 
     def __init__(
         self, left: PreemptableIterator, right: PreemptableIterator,
-        current_mappings: Optional[Dict[str, str]] = None,
-        foundOne : bool = False
+        current_mappings: Optional[Dict[str, str]] = None
     ):
         super(IndexLeftJoinIterator, self).__init__()
         self._left = left
         self._right = right
         self._current_mappings = current_mappings
-        self._foundOne = foundOne
 
     def __repr__(self) -> str:
         return f"<IndexLeftJoinIterator ({self._left} LEFTJOIN {self._right} WITH {self._current_mappings})>"
@@ -63,21 +61,19 @@ class IndexLeftJoinIterator(PreemptableIterator):
         while True:
             if self._current_mappings is None:
                 self._current_mappings = await self._left.next(context=context)
-                self._foundOne = False
                 if self._current_mappings is None:
                     return None
                 self._right.next_stage(self._current_mappings)
             else:
                 mappings = await self._right.next(context=context)
-                # print("debug context : ", context)
                 # print("debug current mappings : ", self._current_mappings)
                 # print("debug mappings : ", mappings)
 
                 if mappings is not None:
-                    self._foundOne = True
+                    self._current_mappings = None
                     return mappings
 
-                if(not self._foundOne):
+                else:
                     theMapping = self._current_mappings
                     self._current_mappings = None
                     return theMapping
@@ -95,6 +91,4 @@ class IndexLeftJoinIterator(PreemptableIterator):
         getattr(saved_join, right_field).CopyFrom(self._right.save())
         if self._current_mappings is not None:
             pyDict_to_protoDict(self._current_mappings, saved_join.muc)
-        
-        saved_join.found_one = self._foundOne
         return saved_join

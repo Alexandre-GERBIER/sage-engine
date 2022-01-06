@@ -88,7 +88,6 @@ message SavedLeftJoinIterator {
     SavedLeftJoinIterator leftjoin_right = 14;
   }
   map<string, string> muc = 15;
-  bool found_one = 16;
 }
 
 message SavedBagUnionIterator {

@@ -1,6 +1,6 @@
 name: SaGe Test server
 maintainer: Thomas Minier <thomas.minier@univ-nantes.fr>
-quota: 0.05
+quota: 0.5
 max_results: 500
 graphs:
 -
