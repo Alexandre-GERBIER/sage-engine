@@ -1,0 +1,11 @@
+name: SaGe Test server
+maintainer: Thomas Minier <thomas.minier@univ-nantes.fr>
+quota: 10000000
+max_results: 10000000
+graphs:
+-
+  name: dbpedia
+  uri: http://localhost:8000/sparql/dbpedia
+  description: dbpedia3.5.1 short abstract for benchmark
+  backend: hdt-file
+  file: ../benchmark/dbpedia3.5.1short.hdt

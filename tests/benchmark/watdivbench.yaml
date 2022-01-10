@@ -1,0 +1,11 @@
+name: SaGe Test server
+maintainer: Thomas Minier <thomas.minier@univ-nantes.fr>
+quota: 10000000
+max_results: 10000000
+graphs:
+-
+  name: watdiv
+  uri: http://localhost:8000/sparql/watdiv
+  description: watdiv 10 milllions entries for benchmark
+  backend: hdt-file
+  file: ../benchmark/watdiv10M.hdt
