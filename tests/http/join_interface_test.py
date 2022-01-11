@@ -34,16 +34,17 @@ class TestLeftJoinInterface(object):
         nbResults = 0
         nbCalls = 0
         hasNext = True
+        results = []
         next_link = None
         while hasNext:
             response = post_sparql(self._client, query, next_link, 'http://localhost:8000/sparql/perez')
             assert response.status_code == 200
             response = response.json()
             nbResults += len(response['bindings'])
-            print(response['bindings'])
+            results.extend(response['bindings'])
             hasNext = response['hasNext']
             next_link = response['next']
             nbCalls += 1
         assert nbResults == cardinality
-        assert response['bindings'] == oracle
+        assert results == oracle
         assert nbCalls >= 1

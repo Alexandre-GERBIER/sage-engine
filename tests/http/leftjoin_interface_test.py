@@ -80,6 +80,7 @@ class TestLeftJoinInterface(object):
     def test_leftjoin_interface(self, query, cardinality, oracle):
         nbResults = 0
         nbCalls = 0
+        results = []
         hasNext = True
         next_link = None
         while hasNext:
@@ -87,10 +88,11 @@ class TestLeftJoinInterface(object):
             assert response.status_code == 200
             response = response.json()
             nbResults += len(response['bindings'])
+            results.extend(response['bindings'])
             print(response['bindings'])
             hasNext = response['hasNext']
             next_link = response['next']
             nbCalls += 1
         assert nbResults == cardinality
-        assert response['bindings'] == oracle
+        assert results == oracle
         assert nbCalls >= 1

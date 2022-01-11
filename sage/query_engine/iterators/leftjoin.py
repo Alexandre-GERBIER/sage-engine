@@ -69,8 +69,6 @@ class IndexLeftJoinIterator(PreemptableIterator):
                 self._right.next_stage(self._current_mappings)
             else:
                 mappings = await self._right.next(context=context)
-                # print("debug current mappings : ", self._current_mappings)
-                # print("debug mappings : ", mappings)
 
                 if mappings is not None:
                     self._foundOne = True
